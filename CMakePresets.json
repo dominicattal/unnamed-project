@@ -1,0 +1,14 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "tictactoe",
+      "displayName": "Tic Taco Toe",
+      "description": "Build the program",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "23"
+      }
+    }
+  ]
+}
