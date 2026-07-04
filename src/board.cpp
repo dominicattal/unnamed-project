@@ -3,39 +3,44 @@
 #include <vector>
 
 Board::Board(int num_rows, int num_cols, int win_condition)
+    : num_rows(num_rows), num_cols(num_cols), win_condition(win_condition), board(num_rows * num_cols, Player::NONE)
+{}
+
+Board::Player Board::get_cell_state(int row, int col) const
 {
-    this->num_rows = num_rows;
-    this->num_cols = num_cols;
-    this->win_condition = win_condition;
-    this->moving_player = PLAYER_X;
-    this->board = std::vector<std::vector<int>>(num_rows, std::vector<int>(num_cols, 0));
+    return this->board[row * this->num_cols + col];
+}
+
+void Board::set_cell_state(int row, int col, Player player)
+{
+    this->board[row * this->num_cols + col] = player;
 }
 
 bool Board::check_win_from_cell(int row, int col)
 {
-    static int row_offsets[3] = { 0, 1, 1 };
-    static int col_offsets[3] = { 1, 0, 1 };
+    static int row_offsets[4] = { 0, 1, 1, 1 };
+    static int col_offsets[4] = { 1, 0, 1, -1 };
 
-    int player = this->board[row][col];
+    Player player = this->get_cell_state(row, col);
 
-    if (player == UNOCCUPIED)
+    if (player == Player::NONE)
         return false;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         int row_offset = row_offsets[i];
         int col_offset = col_offsets[i];
         // start at this cell
         int count = 1;
         int cur_row = row + row_offset;
         int cur_col = col + col_offset;
-        while (this->check_cell_in_bounds(cur_row, cur_col) && this->board[cur_row][cur_col] == player) {
+        while (this->check_cell_in_bounds(cur_row, cur_col) && this->get_cell_state(cur_row, cur_col) == player) {
             cur_row += row_offset;
             cur_col += col_offset;
             count++;
         }
         cur_row = row - row_offset;
         cur_col = col - col_offset;
-        while (this->check_cell_in_bounds(cur_row, cur_col) && this->board[cur_row][cur_col] == player) {
+        while (this->check_cell_in_bounds(cur_row, cur_col) && this->get_cell_state(cur_row, cur_col) == player) {
             cur_row -= row_offset;
             cur_col -= col_offset;
             count++;
@@ -52,44 +57,45 @@ bool Board::check_cell_in_bounds(int row, int col)
     return row >= 0 && row < this->num_rows && col >= 0 && col < this->num_cols;
 }
 
-int Board::make_move(int row, int col)
+Board::MoveResult Board::make_move(int row, int col)
 {
     if (!this->check_cell_in_bounds(row, col))
-        return INVALID_MOVE;
-    if (this->board[row][col] != UNOCCUPIED)
-        return INVALID_MOVE;
+        return MoveResult::INVALID;
+    if (this->get_cell_state(row, col) != Player::NONE)
+        return MoveResult::INVALID;
 
-    this->board[row][col] = this->moving_player;
+    this->set_cell_state(row, col, this->moving_player);
 
-    if (this->moving_player == PLAYER_X)
-        this->moving_player = PLAYER_O;
+    if (this->moving_player == Player::X)
+        this->moving_player = Player::O;
     else
-        this->moving_player = PLAYER_X;
+        this->moving_player = Player::X;
 
-    return VALID_MOVE;
+    return MoveResult::VALID;
 }
 
-int Board::check_game_state()
+Board::GameState Board::check_game_state()
 {
     bool all_cells_occupied = true;
     for (int row = 0; row < this->num_rows; row++) {
         for (int col = 0; col < this->num_cols; col++) {
             if (this->check_win_from_cell(row, col))
-                return ((this->board[row][col] == PLAYER_X) ? PLAYER_X_WIN : PLAYER_O_WIN);
-            all_cells_occupied = all_cells_occupied && this->board[row][col] != UNOCCUPIED;
+                return ((this->get_cell_state(row, col) == Player::X) ? GameState::X_WIN : GameState::O_WIN);
+            all_cells_occupied = all_cells_occupied && this->get_cell_state(row, col) != Player::NONE;
         }
     }
-    return ((all_cells_occupied) ? TIE : IN_PROGRESS);
+    return ((all_cells_occupied) ? GameState::TIE : GameState::IN_PROGRESS);
 }
 
 std::ostream& operator<<(std::ostream& out, const Board& board)
 {
-    static const char types[3] = {' ', 'X', 'O'};
+    //static const char types[3] = {' ', 'X', 'O'};
     for (int row = 0; row < 2 * board.num_rows - 1; row++) {
         if (row % 2 == 0) {
             for (int col = 0; col < 2 * board.num_cols - 1; col++) {
                 if (col % 2 == 0) {
-                    out << types[board.board[row>>1][col>>1]];
+                    //out << types[static_cast<int>(board.get_cell_state(row>>1, col>>1))];
+                    out << static_cast<char>(board.get_cell_state(row>>1, col>>1));
                 } else {
                     out << '|';
                 }
