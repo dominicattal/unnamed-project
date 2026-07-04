@@ -3,15 +3,11 @@ cmake_minimum_required(VERSION 3.23)
 project(TicTacToe)
 
 add_executable(run)
+target_include_directories(run PUBLIC include)
 target_sources(run
     PRIVATE
         src/main.cpp
         src/board.cpp
-
-    PUBLIC
-        FILE_SET HEADERS
-        FILES
-            include/board.h
 )
 
 if(
@@ -30,5 +26,6 @@ elseif(
   target_compile_options(run PRIVATE -Wextra)
   target_compile_options(run PRIVATE -Werror)
   target_compile_options(run PRIVATE -Wfatal-errors)
+  target_compile_options(run PRIVATE -g3)
 
 endif()
