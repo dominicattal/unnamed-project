@@ -3,11 +3,11 @@ cmake_minimum_required(VERSION 3.23)
 project(TicTacToe)
 
 add_executable(run)
-target_include_directories(run PUBLIC include)
 target_sources(run
     PRIVATE
         src/main.cpp
         src/board.cpp
+        src/term.cpp
 )
 
 if(

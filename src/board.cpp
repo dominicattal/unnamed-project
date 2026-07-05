@@ -65,6 +65,7 @@ Board::MoveResult Board::make_move(int row, int col)
         return MoveResult::INVALID;
 
     this->set_cell_state(row, col, this->moving_player);
+    this->history.emplace_back(row, col);
 
     if (this->moving_player == Player::X)
         this->moving_player = Player::O;
@@ -89,13 +90,19 @@ Board::GameState Board::check_game_state()
 
 std::ostream& operator<<(std::ostream& out, const Board& board)
 {
-    //static const char types[3] = {' ', 'X', 'O'};
     for (int row = 0; row < 2 * board.num_rows - 1; row++) {
         if (row % 2 == 0) {
             for (int col = 0; col < 2 * board.num_cols - 1; col++) {
                 if (col % 2 == 0) {
-                    //out << types[static_cast<int>(board.get_cell_state(row>>1, col>>1))];
-                    out << static_cast<char>(board.get_cell_state(row>>1, col>>1));
+                    if (board.cursor == std::pair<int,int>{ row>>1, col>>1 })
+                        out << "\033[48;2;100;100;100m";
+                    Board::Player player = board.get_cell_state(row>>1, col>>1);
+                    if (player == Board::Player::X)
+                        out << "\033[31m";
+                    else if (player == Board::Player::O)
+                        out << "\033[34m";
+                    out << static_cast<char>(player);
+                    out << "\033[39m\033[49m";
                 } else {
                     out << '|';
                 }

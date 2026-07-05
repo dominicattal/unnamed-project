@@ -18,8 +18,10 @@ class Board {
         int num_rows;
         int num_cols;
         int win_condition;
+        std::pair<int, int> cursor { 0, 0 };
         Player moving_player = Player::X;
         std::vector<Player> board;
+        std::vector<std::pair<int, int>> history;
 
         Board(int num_rows, int num_cols, int win_condition);
         Player get_cell_state(int row, int col) const;

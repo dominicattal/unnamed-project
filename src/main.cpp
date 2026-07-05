@@ -1,12 +1,13 @@
 #include "board.h"
+#include "term.h"
 #include <iostream>
 #include <vector>
 #include <format>
 #include <random>
 
-int main()
+void run_game()
 {
-    Board board(5, 5, 3);
+    Board board(7,7,4);
     std::cout << board << '\n';
 
     std::random_device random_device;
@@ -32,5 +33,14 @@ int main()
     else if (cur_state == Board::GameState::O_WIN)
         std::cout << std::format("Player 2 wins!\n");
     else
-        std::cout << std::format("It's a tie!");
+        std::cout << std::format("It's a tie!\n");
+
+    std::cout << std::format("Game ended in {} moves\n", board.history.size());
+}
+
+int main()
+{
+    Term term{};
+    while (term.prompt())
+        ;
 }
