@@ -1,12 +1,17 @@
 #ifndef TERM_H
 #define TERM_H
 
-#include "board.h"
-#include <string>
+#include "game.h"
+#include "player.h"
+#include <optional>
+#include <string_view>
 
 class Term {
     private:
-        std::optional<Board> board;
+        Player player;
+        std::optional<Game> game;
+        void parse_game(std::istringstream& cmd_stream);
+        void parse_command(std::istringstream& cmd_stream);
         void parse(std::string command);
         void clear();
     public:

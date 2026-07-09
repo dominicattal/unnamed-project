@@ -6,8 +6,9 @@ add_executable(run)
 target_sources(run
     PRIVATE
         src/main.cpp
-        src/board.cpp
+        src/game.cpp
         src/term.cpp
+        src/player.cpp
 )
 
 if(
