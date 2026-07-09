@@ -23,6 +23,9 @@ class Board {
         std::vector<Player> board;
         std::vector<std::pair<int, int>> history;
 
+        operator bool() const;
+
+        Board(int num_rows, int num_cols);
         Board(int num_rows, int num_cols, int win_condition);
         Player get_cell_state(int row, int col) const;
         void set_cell_state(int row, int col, Player player);

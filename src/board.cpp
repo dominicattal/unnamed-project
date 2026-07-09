@@ -2,6 +2,10 @@
 #include <iostream>
 #include <vector>
 
+Board::Board(int num_rows, int num_cols)
+    : num_rows(num_rows), num_cols(num_cols), win_condition(3), board(num_rows * num_cols, Player::NONE)
+{}
+
 Board::Board(int num_rows, int num_cols, int win_condition)
     : num_rows(num_rows), num_cols(num_cols), win_condition(win_condition), board(num_rows * num_cols, Player::NONE)
 {}
